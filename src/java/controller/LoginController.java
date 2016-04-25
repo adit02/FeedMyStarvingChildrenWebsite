@@ -5,6 +5,7 @@
  */
 package controller;
 
+import com.google.gson.Gson;
 import dao.LoginDAO;
 import dao.LoginDAOImpl;
 import java.util.ArrayList;
@@ -37,8 +38,9 @@ public class LoginController {
     private String name;            // display name on login
     private String updateStatus;
     private String availableStat;
+    private String printJson;
     private int count = 0;
-    private String flag=null;
+    private String flag = null;
 
     /**
      * Creates a new instance of ProfileController
@@ -62,7 +64,7 @@ public class LoginController {
         this.theModel = theModel;
     }
 
-     /**
+    /**
      * @return the thePixel
      */
     public PixelBean getThePixel() {
@@ -75,9 +77,7 @@ public class LoginController {
     public void setThePixel(PixelBean thePixel) {
         this.thePixel = thePixel;
     }
-    
-    
-    
+
     /**
      * @return the response
      */
@@ -152,31 +152,16 @@ public class LoginController {
         }
     }
 
-   public String purchase() {                   // purchase the pixel
+    public String purchase() {                   // purchase the pixel
 
         LoginDAO aPixel = new LoginDAOImpl();
-        int pixel = thePixel.getPixelNumber();
-        String pix = aPixel.findByNumber(pixel);
+        ArrayList pix = aPixel.findByNumber();
+        String json = new Gson().toJson(pix);
+        printJson = json;
+        return printJson;
 
-        if (pix.isEmpty()) {
-
-            LoginDAO aLoginDAO = new LoginDAOImpl();    // Creating a new object each time.
-
-            int rowCount = aLoginDAO.purchase(getThePixel());  // Doing anything with the object after this?
-
-            if (rowCount == 1) {
-//
-//                JavaMailApp sendMail = new JavaMailApp();
-//                sendMail.MailApp(theModel.getEmailID());
-                return "echo.xhtml?faces-redirect=true"; // navigate to "response.xhtml"
-            } else {
-                return "error.xhml?faces-redirect=true";
-            }
-        } else {
-            return "notavailable.xhtml?faces-redirect=true";
-        }
     }
-    
+
     public String authenticate() {          //login authentication
 
         LoginDAO aUserName = new LoginDAOImpl();
@@ -201,7 +186,7 @@ public class LoginController {
 
             userNameCookie.setMaxAge(-1);
             userNameCookie.setPath("/");
-            
+
             res.addCookie(userNameCookie);
 
             return "userPage.xhtml?faces-redirect=true";
@@ -222,24 +207,26 @@ public class LoginController {
         String uid = theModel.getUserID();
         ArrayList result = aLoginDAO.findByIdUpdate(uid); // Doing anything with the object after this?
         theModel = (LoginBean) result.get(0); // if multiple found, just pick the 1st one. If none?
-        if (theModel != null) 
+        if (theModel != null) {
             return "update.xhtml?faces-redirect=true"; // navigate to "update.xhtml"
-        else
-            return "error.xhtml?faces-redirect=true"; 
+        } else {
+            return "error.xhtml?faces-redirect=true";
+        }
     }
 
     public void updateProfile() {                     // update profile
 
         LoginDAO aLoginDAO = new LoginDAOImpl();    // Creating a new object each time.
 
-            int rowCount = aLoginDAO.updateProfile(theModel);  // Doing anything with the object after this?
+        int rowCount = aLoginDAO.updateProfile(theModel);  // Doing anything with the object after this?
 
-            if (rowCount == 1) {
-                updateStatus = "Updated successfully"; // navigate to "echo.xhtml"
-            } else
-                updateStatus = "Error in updation";
+        if (rowCount == 1) {
+            updateStatus = "Updated successfully"; // navigate to "echo.xhtml"
+        } else {
+            updateStatus = "Error in updation";
+        }
     }
-    
+
     public String isAdmin(ComponentSystemEvent event) {
 //        String ck=null;
         HttpServletRequest httpServletRequest
@@ -260,53 +247,52 @@ public class LoginController {
             }
         }
         FacesContext fc = FacesContext.getCurrentInstance();
-                        ConfigurableNavigationHandler nav = (ConfigurableNavigationHandler) fc.getApplication().getNavigationHandler();
-                        nav.performNavigation("pleaseLogin.xhtml?faces-redirect=true");
+        ConfigurableNavigationHandler nav = (ConfigurableNavigationHandler) fc.getApplication().getNavigationHandler();
+        nav.performNavigation("pleaseLogin.xhtml?faces-redirect=true");
         return flag;
     }
-    
-    public String payNow(){
+
+    public String payNow() {
         String sName = thePixel.getDisplayName();
-        int pNum = thePixel.getPixelNumber();
+        String pNum = thePixel.getPixelNumber();
         HttpServletRequest httpServletRequest
                 = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         HttpSession session = httpServletRequest.getSession(true);
         session.setAttribute("login", sName);
         session.setAttribute("pNum", pNum);
-        
+
         return "confirmPayment.xhtml";
-        
+
     }
-    
-    
-    public String middle(){
+
+    public void middle() {
         HttpServletRequest httpServletRequest
                 = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext().getRequest();
         HttpSession session = httpServletRequest.getSession(false);
         session.getAttribute("login");
         session.getAttribute("pNum");
-        
 
-        LoginDAO aUserID = new LoginDAOImpl();
+        LoginDAO aDName = new LoginDAOImpl();
         String dName = (String) session.getAttribute("login");
-        int pNum = (int) session.getAttribute("pNum");
-        String check = aUserID.findByDName(dName);
+//        int pNum = (int) session.getAttribute("pNum");
+        String check = aDName.findByDName(dName);
 
         if (check.isEmpty()) {
 
-            LoginDAO aProfileDAO = new LoginDAOImpl();    // Creating a new object each time.
+            LoginDAO aDNameDAO = new LoginDAOImpl();    // Creating a new object each time.
 
-            int rowCount = aProfileDAO.middle(thePixel);  // Doing anything with the object after this?
+            aDNameDAO.middle();  // Doing anything with the object after this?
 
-            if (rowCount == 1) {
-                
-                return "echo.xhtml?faces-redirect=true"; // navigate to "response.xhtml"
-            } else {
-                return "error.xhml?faces-redirect=true";
-            }
+//            if (rowCount == 1) {
+//                
+//                return "echo.xhtml?faces-redirect=true"; // navigate to "response.xhtml"
+//            } else {
+//                return "error.xhml?faces-redirect=true";
+//            }
         }
-        return "notavailable.xhtml?faces-redirect=true";
+//        return "notavailable.xhtml?faces-redirect=true";
     }
+
     /**
      * @return the updateStatus
      */
@@ -335,5 +321,18 @@ public class LoginController {
         this.availableStat = availableStat;
     }
 
-   
+    /**
+     * @return the printJson
+     */
+    public String getPrintJson() {
+        return printJson;
+    }
+
+    /**
+     * @param printJson the printJson to set
+     */
+    public void setPrintJson(String printJson) {
+        this.printJson = printJson;
+    }
+
 }
