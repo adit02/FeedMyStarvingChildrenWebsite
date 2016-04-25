@@ -12,27 +12,33 @@ package model;
 public class PixelBean {
     // These correspond to the form elements
 
-    private int pixelNumber;
+    private String pixelNumber;
     private String displayName;
 
     public PixelBean() {
+        
     }
 
-    public PixelBean(int pixelNumber) {
+    public PixelBean(String pixelNumber) {
         this.pixelNumber = pixelNumber;
+    }
+
+    public PixelBean(String dName, String pNum) {
+        this.displayName = dName;
+        this.pixelNumber = pNum;
     }
 
     /**
      * @return the pixelNumber
      */
-    public int getPixelNumber() {
+    public String getPixelNumber() {
         return pixelNumber;
     }
 
     /**
      * @param pixelNumber the pixelNumber to set
      */
-    public void setPixelNumber(int pixelNumber) {
+    public void setPixelNumber(String pixelNumber) {
         this.pixelNumber = pixelNumber;
     }
 
