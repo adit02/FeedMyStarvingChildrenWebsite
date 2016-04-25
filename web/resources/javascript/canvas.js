@@ -43,11 +43,6 @@
 //});
 
 
-
-
-
-
-
 $(document).ready(function () {
 
     var imageObj = new Image();
@@ -58,13 +53,13 @@ $(document).ready(function () {
 
     var canvas = document.getElementById('ex1');
     var ctx = canvas.getContext('2d');
-    var imgW = imageObj.width;
-    var imgH = imageObj.height;
+    var imageWidth = imageObj.width;
+    var imageHeight = imageObj.height;
 
     function reOffset() {
-        var BB = canvas.getBoundingClientRect();
-        offsetX = BB.left;
-        offsetY = BB.top;
+        var mouse = canvas.getBoundingClientRect();
+        offsetX = mouse.left;
+        offsetY = mouse.top;
     }
     var offsetX, offsetY;
     reOffset();
@@ -81,8 +76,8 @@ $(document).ready(function () {
         $("#nm").html("");
     });
     imageObj.onload = function () {
-        canvas.width = imgW;
-        canvas.height = imgH;
+        canvas.width = imageWidth;
+        canvas.height = imageHeight;
         ctx.fillStyle = ctx.createPattern(this, "no-repeat");
         makeRect();
     };
