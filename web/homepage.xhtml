@@ -60,6 +60,9 @@
                 </td>
                 <td>
                     <div>
+                        <h:inputHidden id="json" value="#{loginController.purchase()}"></h:inputHidden>
+                        <h:outputText id="json1" escape="false" value="#{loginController.printJson}"></h:outputText>
+                        <div id="nm"></div>
                         <canvas id="ex1" width="1000" height="1000"
                                 style="border: 1px solid #cccccc;">
                             HTML5 Canvas not supported
